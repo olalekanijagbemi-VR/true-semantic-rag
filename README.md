@@ -1,31 +1,26 @@
-# True Semantic RAG System
+# Professional RAG System
 
-**Production RAG with pure vector similarity search - NO keyword matching, NO BM25**
-
-## Demo Video
-[Add your Loom/Walkthrough link here]
-
-## Features
-- ✅ **Pure Semantic Search** - Cosine similarity on vector embeddings
-- ✅ **No Hallucinations** - Confidence thresholding (0.35+ relevance required)
-- ✅ **Production Ready** - Groq inference (300 tokens/sec)
-- ✅ **Zero Cost** - Free tier Groq API
+**Live Demo:** https://true-semantic-rag-53sy8qr4z4oeaa88uqx6q8.streamlit.app/
 
 ## Tech Stack
 | Component | Technology |
 |-----------|------------|
-| Embeddings | sentence-transformers/all-mpnet-base-v2 (768 dims) |
-| Vector DB | ChromaDB with cosine similarity |
+| Vector Database | FAISS |
+| Embeddings | HuggingFace (all-mpnet-base-v2) |
 | LLM | Groq (llama-3.3-70b-versatile) |
-| UI | Streamlit |
 | Framework | LangChain |
+| UI | Streamlit |
+| Deployment | Streamlit Cloud |
+
+## Features
+- ✅ Semantic search with cosine similarity (NOT keyword matching)
+- ✅ Document summarization
+- ✅ Hallucination guardrails (confidence threshold 0.15)
+- ✅ Live deployment - test with your own PDFs
 
 ## Quick Start
-
 ```bash
-git clone https://github.com/olalekanijagbemi-VR/true-semantic-rag.git
+git clone https://github.com/olalekanijagbemi-VR/true-semantic-rag
 cd true-semantic-rag
-python -m venv venv
-source venv/bin/activate
 pip install -r requirements.txt
 streamlit run app.py
