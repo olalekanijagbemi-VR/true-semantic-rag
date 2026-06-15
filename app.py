@@ -4,10 +4,11 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_groq import ChatGroq
 from langchain_community.vectorstores import Chroma
 from langchain_community.document_loaders import PyPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
 import tempfile
+import shutil
 
 load_dotenv()
 
@@ -17,7 +18,6 @@ st.markdown("**Semantic Search | No Hallucinations | Production Ready**")
 
 @st.cache_resource
 def init_embeddings():
-    # Using OpenAI embeddings (works with Groq's API format)
     return OpenAIEmbeddings(
         model="text-embedding-3-small",
         openai_api_key=os.getenv("GROQ_API_KEY"),
@@ -78,14 +78,13 @@ if uploaded_file:
     if 'last_file' not in st.session_state or st.session_state.last_file != uploaded_file.name:
         st.session_state.last_file = uploaded_file.name
         if os.path.exists("./chroma_db"):
-            import shutil
             shutil.rmtree("./chroma_db")
             st.info("Cache cleared for new document")
     
     if st.button("Process Document"):
         with st.spinner("Creating embeddings..."):
             num_chunks = process_pdf(uploaded_file)
-            st.success(f" Document processed! {num_chunks} chunks indexed")
+            st.success(f"Document processed! {num_chunks} chunks indexed")
     
     st.divider()
     query = st.text_input("Ask a question:")
