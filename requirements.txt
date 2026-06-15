@@ -2,6 +2,7 @@ streamlit==1.29.0
 langchain==0.1.0
 langchain-community==0.0.10
 langchain-groq
+langchain-text-splitters
 chromadb
 pypdf
 python-dotenv
