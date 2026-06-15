@@ -3,6 +3,6 @@ langchain
 langchain-community
 langchain-groq
 langchain-openai
-chromadb
+faiss-cpu
 pypdf
 python-dotenv
