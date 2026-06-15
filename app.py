@@ -1,7 +1,7 @@
 import streamlit as st
 import os
-from langchain_openai import OpenAIEmbeddings
 from langchain_groq import ChatGroq
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -18,10 +18,11 @@ st.markdown("**Semantic Search | No Hallucinations | Production Ready**")
 
 @st.cache_resource
 def init_embeddings():
-    return OpenAIEmbeddings(
-        model="text-embedding-3-small",
-        openai_api_key=os.getenv("GROQ_API_KEY"),
-        openai_api_base="https://api.groq.com/openai/v1"
+    # Free local embeddings - no API key needed
+    return HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-MiniLM-L6-v2",
+        model_kwargs={'device': 'cpu'},
+        encode_kwargs={'normalize_embeddings': True}
     )
 
 @st.cache_resource
@@ -128,8 +129,9 @@ if uploaded_file:
 with st.sidebar:
     st.header("Production Features")
     st.markdown("""
-    - Semantic search with cosine similarity
-    - FAISS vector database (lighter than ChromaDB)
-    - No hallucinations (confidence threshold)
-    - Groq API for fast inference
+    - **Semantic search** with cosine similarity
+    - **FAISS** vector database
+    - **No hallucinations** (confidence threshold)
+    - **Groq API** for fast inference
+    - **Free embeddings** (Hugging Face)
     """)
