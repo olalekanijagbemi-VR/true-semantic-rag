@@ -18,9 +18,9 @@ st.markdown("**Semantic Search | No Hallucinations | Production Ready**")
 
 @st.cache_resource
 def init_embeddings():
-    # Free local embeddings - no API key needed
+    # Better embedding model for higher similarity scores
     return HuggingFaceEmbeddings(
-        model_name="sentence-transformers/all-MiniLM-L6-v2",
+        model_name="sentence-transformers/all-mpnet-base-v2",  # Better than MiniLM
         model_kwargs={'device': 'cpu'},
         encode_kwargs={'normalize_embeddings': True}
     )
@@ -42,7 +42,7 @@ def process_pdf(uploaded_file):
     documents = loader.load()
     
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=500,
+        chunk_size=300,  # Smaller chunks = better matching
         chunk_overlap=50,
         separators=["\n\n", "\n", ".", " ", ""]
     )
@@ -51,7 +51,6 @@ def process_pdf(uploaded_file):
     embeddings = init_embeddings()
     vectorstore = FAISS.from_documents(chunks, embeddings)
     
-    # Save locally
     faiss_path = "./faiss_db"
     if os.path.exists(faiss_path):
         shutil.rmtree(faiss_path)
@@ -70,7 +69,7 @@ def semantic_search(vectorstore, query, k=5):
     results = vectorstore.similarity_search_with_relevance_scores(query, k=k)
     return results
 
-def check_if_relevant(results, threshold=0.35):
+def check_if_relevant(results, threshold=0.15):  # Lowered threshold
     if not results:
         return False, 0
     max_score = results[0][1]
@@ -89,6 +88,7 @@ if uploaded_file:
         with st.spinner("Creating embeddings..."):
             num_chunks = process_pdf(uploaded_file)
             st.success(f"Document processed! {num_chunks} chunks indexed")
+            st.info("Using all-mpnet-base-v2 embeddings (768 dimensions)")
     
     st.divider()
     query = st.text_input("Ask a question:")
@@ -109,7 +109,7 @@ if uploaded_file:
                     st.write(doc.page_content[:400])
             
             if not is_relevant:
-                st.warning("No sufficiently relevant information found.")
+                st.warning("No sufficiently relevant information found. Try rephrasing your question.")
             else:
                 with st.spinner("Generating answer..."):
                     context = "\n\n".join([doc.page_content for doc, _ in results[:3]])
@@ -133,5 +133,5 @@ with st.sidebar:
     - **FAISS** vector database
     - **No hallucinations** (confidence threshold)
     - **Groq API** for fast inference
-    - **Free embeddings** (Hugging Face)
+    - **Free embeddings** (all-mpnet-base-v2)
     """)
